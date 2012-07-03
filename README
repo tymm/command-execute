@@ -1,5 +1,6 @@
 I wrote this plugin because non of the existing command execution plugins worked for Finch.
-Thanks to the authors of existing notification plugins where i could see how to use the libpurple API (the documentation is really bad)
+Everytime a conversation is updated (a message is received which you didnt see yet) the command is executed.
+Thanks to the authors of existing notification plugins where i could see how to use the libpurple API.
 
 You can compile it with:
 
