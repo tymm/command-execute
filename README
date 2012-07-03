@@ -1,0 +1,6 @@
+I wrote this plugin because non of the existing command execution plugins worked for Finch.
+Thanks to the authors of existing notification plugins where i could see how to use the libpurple API (the documentation is really bad)
+
+You can compile it with:
+
+gcc cmdexecgcc cmdexecute.c -O2 -Wall -fpic `pkg-config --cflags glib-2.0` -I/path/to/your/libpurple/headers -shared -o cmdexecute.so
