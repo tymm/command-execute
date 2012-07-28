@@ -4,4 +4,4 @@ Thanks to the authors of existing notification plugins where i could see how to 
 
 You can compile it with:
 
-gcc cmdexecgcc cmdexecute.c -O2 -Wall -fpic `pkg-config --cflags glib-2.0` -I/path/to/your/libpurple/headers -shared -o cmdexecute.so
+gcc command-execute.c -O2 -Wall -fpic `pkg-config --cflags glib-2.0` -I/path/to/your/libpurple/headers -shared -o command-execute.so
