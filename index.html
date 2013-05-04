@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Command-execute by tymm</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Command-execute</h1>
+        <p>Simple command execution plugin for Pidgin and Finch</p>
+
+        <p class="view"><a href="https://github.com/tymm/command-execute">View the Project on GitHub <small>tymm/command-execute</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/tymm/command-execute/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/tymm/command-execute/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/tymm/command-execute">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>Readme</h1>
+
+<h2>What?</h2>
+
+<p>Command-execute is a plugin for Pidgin and Finch which lets you execute a command on either every new IM received or on every conversation update.</p>
+
+<p>A conversation update is triggered everytime a message is received which you did not see yet. For example that applies for messages which occur in a window which is in the background in Finch.</p>
+
+<h2>How?</h2>
+
+<p>Just put the <code>command-execute.so</code> into your Pidgin/Finch plugins folder.
+Normally this is <code>~/.purple/plugins/</code>.</p>
+
+<p>If this does not work for you, you maybe have to compile the plugin yourself:</p>
+
+<p><code>gcc command-execute.c -O2 -Wall -fpic `pkg-config --cflags glib-2.0` -I/path/to/headers -shared -o command-execute.so</code>
+You have to replace /path/to/headers with the path to the libpurple header files.</p>
+
+<h2>Why?</h2>
+
+<p>I wrote this plugin because non of the existing command execution plugins worked for Pidgin <em>and</em> Finch.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/tymm">tymm</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-40671100-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
