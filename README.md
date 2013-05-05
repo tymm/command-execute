@@ -10,7 +10,5 @@ Normally this is `~/.purple/plugins/`.
 If this does not work for you, you maybe have to compile the plugin yourself:
     
     gcc command-execute.c -O2 -Wall -fpic pkg-config --cflags glib-2.0 -I/path/to/your/libpurple/headers -shared -o command-execute.so
-
-You have to replace /path/to/headers with the path to the libpurple header files.
 ## Why?
 I wrote this plugin because non of the existing command execution plugins worked for Pidgin _and_ Finch.
