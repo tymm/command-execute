@@ -80,6 +80,14 @@ static void cmdexe_received_im_msg(PurpleConversation *conv, PurpleConvUpdateTyp
 	}
 }
 
+static void cmdexe_received_chat_msg() {
+	/* Check if the user wants to execute the command _everytime_ the user receives a chat message */
+	if(purple_prefs_get_bool("/plugins/core/tymm-command-execute/execute_chat")) {
+		const char *cmd = purple_prefs_get_string("/plugins/core/tymm-command-execute/command");
+		execute(cmd);
+	}
+}
+
 static gboolean plugin_load(PurplePlugin *plugin) {
 	/* Connect the conversation-updated signal to the callback function cmdexe_conversation_updated.
 	 * The conversation-updated signal is emitted when a conversation is updated.
@@ -89,6 +97,10 @@ static gboolean plugin_load(PurplePlugin *plugin) {
 	/* Connect the received-im-msg signal to the callback function cmdexe_received_im_msg.
 	 * This signal is emitted everytime an IM message is received */
 	purple_signal_connect(purple_conversations_get_handle(), "received-im-msg", plugin, PURPLE_CALLBACK(cmdexe_received_im_msg), NULL);
+
+	/* Connect the received-chat-msg signal to the callback function cmdexe_received_chat_msg.
+	 * This signal is emitted everytime a Chat message is received */
+	purple_signal_connect(purple_conversations_get_handle(), "received-chat-msg", plugin, PURPLE_CALLBACK(cmdexe_received_chat_msg), NULL);
 	return TRUE;
 }
 
@@ -96,6 +108,7 @@ static gboolean plugin_unload(PurplePlugin *plugin) {
 	/* Disconnect the signal if the plugin is getting unloaded */
 	purple_signal_disconnect(purple_conversations_get_handle(), "conversation-updated", plugin, PURPLE_CALLBACK(cmdexe_conversation_updated));
 	purple_signal_disconnect(purple_conversations_get_handle(), "received-im-msg", plugin, PURPLE_CALLBACK(cmdexe_received_im_msg));
+	purple_signal_disconnect(purple_conversations_get_handle(), "received-chat-msg", plugin, PURPLE_CALLBACK(cmdexe_received_chat_msg));
 	return TRUE;
 }
 
@@ -113,6 +126,9 @@ static PurplePluginPrefFrame *plugin_config_frame(PurplePlugin *plugin) {
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	ppref = purple_plugin_pref_new_with_name_and_label("/plugins/core/tymm-command-execute/execute_always", "Execute command on every new IM (not only on updated conversations)");
+	purple_plugin_pref_frame_add(frame, ppref);
+
+	ppref = purple_plugin_pref_new_with_name_and_label("/plugins/core/tymm-command-execute/execute_chat", "Execute command on new chat messages");
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	return frame;
@@ -141,7 +157,7 @@ static PurplePluginInfo info = {
 	"Command execute",
 	"1.0",
 	"Command execution for pidgin and finch",
-	"Takes a command which will be executed either on every new IM or on every conversation update",
+	"Takes a command which will be executed either on every new IM or on every conversation update. It can also act on new chat messages.",
 	"tymm <tymmm1@gmail.com>",
 	"https://github.com/tymm/command-execute/",
 	plugin_load,
@@ -161,6 +177,7 @@ static void init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_none("/plugins/core/tymm-command-execute");
 	purple_prefs_add_string("/plugins/core/tymm-command-execute/command", "");
 	purple_prefs_add_bool("/plugins/core/tymm-command-execute/execute_always", FALSE);
+	purple_prefs_add_bool("/plugins/core/tymm-command-execute/execute_chat", FALSE);
 }
 
 PURPLE_INIT_PLUGIN(command-execute, init_plugin, info)
