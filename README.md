@@ -1,6 +1,7 @@
 # Readme
 ## What?
 Command-execute is a plugin for Pidgin and Finch which lets you execute a command on either every new IM received or on every conversation update.
+It can also act on new chat messages.
 
 A conversation update is triggered everytime a message is received which you did not see yet. For example that applies for messages which occur in a window which is in the background in Finch.
 ## How?
