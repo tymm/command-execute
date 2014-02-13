@@ -43,9 +43,8 @@ Normally this is <code>~/.purple/plugins/</code>.</p>
 
 <p>If this does not work for you, you maybe have to compile the plugin yourself:</p>
 
-<p><code>gcc command-execute.c -O2 -Wall -fpic `pkg-config --cflags glib-2.0` -I/path/to/headers -shared -o command-execute.so</code></p>
-
-<p>You have to replace <code>/path/to/headers</code> with the path to the libpurple header files.</p>
+<pre><code>gcc command-execute.c -O2 -Wall -fpic pkg-config --cflags glib-2.0 -I/path/to/your/libpurple/headers -shared -o command-execute.so
+</code></pre>
 
 <h2>Why?</h2>
 
