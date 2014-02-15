@@ -44,7 +44,7 @@ typedef enum
 void execute(const char *cmd) {
 	if(strcmp(cmd,"") != 0) {
 		/* Execute command */
-		if(system(cmd) == 0) {
+		if(g_spawn_command_line_async(cmd, NULL) == TRUE) {
 			purple_debug_info(PLUGIN_ID, "Command executed\n");
 		} else {
 			purple_debug_warning(PLUGIN_ID, "There was a problem executing the command\n");
