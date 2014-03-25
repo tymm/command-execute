@@ -33,23 +33,62 @@
 #ifndef _PIDGIN_CONVERSATION_H_
 typedef enum
 {
-        PIDGIN_UNSEEN_NONE,
-        PIDGIN_UNSEEN_EVENT,
-        PIDGIN_UNSEEN_NO_LOG,
-        PIDGIN_UNSEEN_TEXT,
-        PIDGIN_UNSEEN_NICK
+	PIDGIN_UNSEEN_NONE,
+	PIDGIN_UNSEEN_EVENT,
+	PIDGIN_UNSEEN_NO_LOG,
+	PIDGIN_UNSEEN_TEXT,
+	PIDGIN_UNSEEN_NICK
 } PidginUnseenState;
 #endif
 
-void execute(const char *cmd) {
+/* Replace orig with rep in str */
+char *str_replace(char *str, char *orig, char *rep) {
+	static char buffer[4096];
+	char *p;
+
+	if(!(p = strstr(str, orig))) {
+		return str;
+	}
+
+	strncpy(buffer, str, p-str);
+	buffer[p-str] = '\0';
+
+	sprintf(buffer+(p-str), "%s%s", rep, p+strlen(orig));
+
+	return buffer;
+}
+
+char *get_command_with_args(char *cmd, char *sender, char *message) {
+	// Put sender and message into the command string
+	cmd = str_replace(cmd, "%m", message);
+	cmd = str_replace(cmd, "%s", sender);
+	return cmd;
+}
+
+void execute(const char *cmd, char *sender, char *message) {
 	if(strcmp(cmd,"") != 0) {
-		/* Execute command */
-		if(g_spawn_command_line_async(cmd, NULL) == TRUE) {
-			purple_debug_info(PLUGIN_ID, "Command executed\n");
+		// There is a command
+		if(purple_prefs_get_bool("/plugins/core/tymm-command-execute/arguments")) {
+			// The user wants the arguments being parsed
+			char *cmd_args = get_command_with_args(cmd, sender, message);
+
+			if(system(cmd_args) != -1) {
+				purple_debug_info(PLUGIN_ID, "Command executed\n");
+				purple_debug_info(PLUGIN_ID, cmd_args);
+			} else {
+				purple_debug_warning(PLUGIN_ID, "There was a problem executing the command\n");
+			}
 		} else {
-			purple_debug_warning(PLUGIN_ID, "There was a problem executing the command\n");
+			// No arguments
+			if(system(cmd) != -1) {
+				purple_debug_info(PLUGIN_ID, "Command executed\n");
+				purple_debug_info(PLUGIN_ID, cmd);
+			} else {
+				purple_debug_warning(PLUGIN_ID, "There was a problem executing the command\n");
+			}
 		}
 	} else {
+		// There is no command
 		purple_debug_warning(PLUGIN_ID, "No command found\n");
 	}
 }
@@ -66,25 +105,25 @@ static void cmdexe_conversation_updated(PurpleConversation *conv, PurpleConvUpda
 
 		/* Check if the conversation_updated signal has been emitted by a new message or something else */
 		if(has_unseen_state || has_unseen_count) {
-			const char *cmd = purple_prefs_get_string("/plugins/core/tymm-command-execute/command");
-			execute(cmd);
+			//const char *cmd = purple_prefs_get_string("/plugins/core/tymm-command-execute/command");
+			//execute(cmd, sender, message);
 		}
 	}
 }
 
-static void cmdexe_received_im_msg(PurpleConversation *conv, PurpleConvUpdateType type) {
+static void cmdexe_received_im_msg(PurpleAccount *account, char *sender, char *message, PurpleConversation *conv, PurpleMessageFlags flags) {
 	/* Check if the user wants to execute the command on _every_ received IM */
 	if(purple_prefs_get_bool("/plugins/core/tymm-command-execute/execute_always")) {
 		const char *cmd = purple_prefs_get_string("/plugins/core/tymm-command-execute/command");
-		execute(cmd);
+		execute(cmd, sender, message);
 	}
 }
 
-static void cmdexe_received_chat_msg() {
+static void cmdexe_received_chat_msg(PurpleAccount *account, char *sender, char *message, PurpleConversation *conv, PurpleMessageFlags flags) {
 	/* Check if the user wants to execute the command _everytime_ the user receives a chat message */
 	if(purple_prefs_get_bool("/plugins/core/tymm-command-execute/execute_chat")) {
 		const char *cmd = purple_prefs_get_string("/plugins/core/tymm-command-execute/command");
-		execute(cmd);
+		execute(cmd, sender, message);
 	}
 }
 
@@ -131,6 +170,9 @@ static PurplePluginPrefFrame *plugin_config_frame(PurplePlugin *plugin) {
 	ppref = purple_plugin_pref_new_with_name_and_label("/plugins/core/tymm-command-execute/execute_chat", "Execute command on new chat messages");
 	purple_plugin_pref_frame_add(frame, ppref);
 
+	ppref = purple_plugin_pref_new_with_name_and_label("/plugins/core/tymm-command-execute/arguments", "Enable arguments (%s sender, %m message)");
+	purple_plugin_pref_frame_add(frame, ppref);
+
 	return frame;
 }
 
@@ -155,7 +197,7 @@ static PurplePluginInfo info = {
 	PURPLE_PRIORITY_DEFAULT,
 	PLUGIN_ID,
 	"Command execute",
-	"1.0",
+	"1.1",
 	"Command execution for pidgin and finch",
 	"Takes a command which will be executed either on every new IM or on every conversation update. It can also act on new chat messages.",
 	"tymm <tymmm1@gmail.com>",
@@ -178,6 +220,7 @@ static void init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_string("/plugins/core/tymm-command-execute/command", "");
 	purple_prefs_add_bool("/plugins/core/tymm-command-execute/execute_always", FALSE);
 	purple_prefs_add_bool("/plugins/core/tymm-command-execute/execute_chat", FALSE);
+	purple_prefs_add_bool("/plugins/core/tymm-command-execute/arguments", FALSE);
 }
 
 PURPLE_INIT_PLUGIN(command-execute, init_plugin, info)
