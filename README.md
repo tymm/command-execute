@@ -18,4 +18,4 @@ I wrote this plugin because non of the existing command execution plugins worked
 
 - Provide .so files for every platform.
 
-- Implement a feature which makes passing arguments like %m for message or %s for sender possible. This is already kind of implemented in the develop branch. I wouldn't recommend using it though since it is still buggy and probably not secure (remote command injection).
+- Implement a feature which makes passing arguments like %m for message or %s for sender possible. This is already kind of implemented in the develop branch. I wouldn't recommend using it though since it is still buggy and probably not secure (remote command injection). Unfortunately I am too busy right now to finish this feature.
