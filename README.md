@@ -13,3 +13,9 @@ If this does not work for you, you maybe have to compile the plugin yourself:
     gcc command-execute.c -O2 -Wall -fpic `pkg-config --cflags glib-2.0` -I/path/to/your/libpurple/headers -shared -o command-execute.so
 ## Why?
 I wrote this plugin because non of the existing command execution plugins worked for Pidgin _and_ Finch.
+
+## TODO
+
+- Provide .so files for every platform.
+
+- Implement a feature which makes passing arguments like %m for message or %s for sender possible. This is already kind of implemented in the develop branch. I wouldn't recommend using it though since it is still buggy and probably not secure (remote command injection).
