@@ -11,8 +11,6 @@ Normally this is `~/.purple/plugins/` or `/usr/lib/pidgin/`.
 If this does not work for you, you maybe have to compile the plugin yourself:
     
     gcc command-execute.c -O2 -Wall -fpic `pkg-config --cflags glib-2.0` -I/path/to/your/libpurple/headers -shared -o command-execute.so
-## Why?
-I wrote this plugin because non of the existing command execution plugins worked for Pidgin _and_ Finch.
 
 ## TODO
 
