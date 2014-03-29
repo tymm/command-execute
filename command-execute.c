@@ -42,27 +42,27 @@ typedef enum
 #endif
 
 /* Replace orig with rep in str */
-char *str_replace(char *str, char *orig, char *rep) {
-	static char buffer[4096];
+void str_replace(char* buffer, char *str, char *orig, char *rep) {
 	char *p;
 
-	if(!(p = strstr(str, orig))) {
-		return str;
+	if((p = strstr(str, orig))) {
+		// str up to the first character of orig
+		strncpy(buffer, str, p-str);
+
+		// append rep to buffer
+		strcat(buffer, rep);
+
+		// append (end - orig) to buffer
+		strcat(buffer, p+strlen(orig));
+		strcat(buffer, "\0");
 	}
-
-	strncpy(buffer, str, p-str);
-	buffer[p-str] = '\0';
-
-	sprintf(buffer+(p-str), "%s%s", rep, p+strlen(orig));
-
-	return buffer;
 }
 
-char *get_command_with_args(char *cmd, char *sender, char *message) {
+void get_command_with_args(char *buffer, char *cmd, char *sender, char *message) {
 	// Put sender and message into the command string
-	cmd = str_replace(cmd, "%m", message);
-	cmd = str_replace(cmd, "%s", sender);
-	return cmd;
+	char tmp[4096];
+	str_replace(tmp, cmd, "$sender", sender);
+	str_replace(buffer, tmp, "$msg", message);
 }
 
 void execute(const char *cmd, char *sender, char *message) {
@@ -70,7 +70,8 @@ void execute(const char *cmd, char *sender, char *message) {
 		// There is a command
 		if(purple_prefs_get_bool("/plugins/core/tymm-command-execute/arguments")) {
 			// The user wants the arguments being parsed
-			char *cmd_args = get_command_with_args(cmd, sender, message);
+			char cmd_args[4096];
+			get_command_with_args(cmd_args, cmd, sender, message);
 
 			if(system(cmd_args) != -1) {
 				purple_debug_info(PLUGIN_ID, "Command executed\n");
