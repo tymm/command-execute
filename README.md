@@ -16,4 +16,4 @@ If this does not work for you, you maybe have to compile the plugin yourself:
 
 - Provide .so files for every platform.
 
-- Implement a feature which makes passing arguments like %m for message or %s for sender possible. This is already kind of implemented in the develop branch. I wouldn't recommend using it though since it is still buggy and probably not secure (remote command injection). Unfortunately I am too busy right now to finish this feature.
+- Provide a feature which makes passing arguments like $msg for message or $sender for the id of the sender possible. This is already implemented in the develop branch. I wouldn't recommend using it though since I hadn't time yet to test it and make sure the feature doesn't raise security vulnerabilities.
