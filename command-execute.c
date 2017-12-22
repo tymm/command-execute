@@ -16,10 +16,12 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
 
+
 #define PURPLE_PLUGINS
 
 #include <glib.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 
 #include "notify.h"
@@ -41,52 +43,19 @@ typedef enum
 } PidginUnseenState;
 #endif
 
-/* Replace orig with rep in str */
-void str_replace(char* buffer, char *str, char *orig, char *rep) {
-	char *p;
-
-	if((p = strstr(str, orig))) {
-		// str up to the first character of orig
-		strncpy(buffer, str, p-str);
-
-		// append rep to buffer
-		strcat(buffer, rep);
-
-		// append (end - orig) to buffer
-		strcat(buffer, p+strlen(orig));
-		strcat(buffer, "\0");
-	}
-}
-
-void get_command_with_args(char *buffer, char *cmd, char *sender, char *message) {
-	// Put sender and message into the command string
-	char tmp[4096];
-	str_replace(tmp, cmd, "$sender", sender);
-	str_replace(buffer, tmp, "$msg", message);
-}
-
 void execute(const char *cmd, char *sender, char *message) {
 	if(strcmp(cmd,"") != 0) {
-		// There is a command
-		if(purple_prefs_get_bool("/plugins/core/tymm-command-execute/arguments")) {
-			// The user wants the arguments being parsed
-			char cmd_args[4096];
-			get_command_with_args(cmd_args, cmd, sender, message);
-
-			if(system(cmd_args) != -1) {
-				purple_debug_info(PLUGIN_ID, "Command executed\n");
-				purple_debug_info(PLUGIN_ID, cmd_args);
-			} else {
-				purple_debug_warning(PLUGIN_ID, "There was a problem executing the command\n");
-			}
+		pid_t pid = fork();
+		if (pid == -1) {
+		    // error, failed to fork()
+		} else if (pid > 0) {
+			purple_debug_info(PLUGIN_ID, "Command executed\n");
+			purple_debug_info(PLUGIN_ID, cmd);
 		} else {
-			// No arguments
-			if(system(cmd) != -1) {
-				purple_debug_info(PLUGIN_ID, "Command executed\n");
-				purple_debug_info(PLUGIN_ID, cmd);
-			} else {
-				purple_debug_warning(PLUGIN_ID, "There was a problem executing the command\n");
-			}
+			// we are the child
+			execl(cmd,cmd,sender,message,(char *) NULL);
+			purple_debug_warning(PLUGIN_ID, "There was a problem executing the command\n");
+			_exit(EXIT_FAILURE);   // exec never returns
 		}
 	} else {
 		// There is no command
