@@ -60,7 +60,7 @@ void str_replace(char* buffer, char *str, char *orig, char *rep) {
 
 void get_command_with_args(char *buffer, char *cmd, char *sender, char *message) {
 	// Put sender and message into the command string
-	char tmp[4096];
+	char tmp[4096] = { 0 };
 	str_replace(tmp, cmd, "$sender", sender);
 	str_replace(buffer, tmp, "$msg", message);
 }
